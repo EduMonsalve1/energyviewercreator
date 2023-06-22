@@ -237,17 +237,18 @@ parallel_df = plplin_copy[plplin_copy['id'].isin([item for sublist in parallel_l
 parallel_dict = {id_par: par[0] for par in parallel_lines for id_par in par}
 parallel_df['parallel_id'] = parallel_df['id'].map(parallel_dict)
 
-# Ahora podemos agrupar por 'Hidro', 'time' y 'parallel_id', y sumar 'LinFluP' dentro de cada grupo.
-grouped_df = parallel_df.groupby(['Hidro', 'time', 'parallel_id'])['LinFluP'].sum().reset_index()
+# Ahora podemos agrupar por 'Hidro', 'time' y 'parallel_id', y sumar 'LinFluP' y 'capacity' dentro de cada grupo.
+grouped_df = parallel_df.groupby(['Hidro', 'time', 'parallel_id'])[['LinFluP', 'capacity']].sum().reset_index()
 
 # Primero, fusionamos 'parallel_df' con 'grouped_df'.
 result = pd.merge(parallel_df, grouped_df, on=['Hidro', 'time', 'parallel_id'], how='left', suffixes=('', '_sum'))
 
-# Ahora, reemplazamos los valores de 'LinFluP' con los de 'LinFluP_sum' solo para las filas donde 'id' es igual a 'parallel_id'.
+# Ahora, reemplazamos los valores de 'LinFluP' y 'capacity' con los de 'LinFluP_sum' y 'capacity_sum' solo para las filas donde 'id' es igual a 'parallel_id'.
 result.loc[result['id'] == result['parallel_id'], 'LinFluP'] = result['LinFluP_sum']
+result.loc[result['id'] == result['parallel_id'], 'capacity'] = result['capacity_sum']
 
-# Finalmente, eliminamos la columna 'LinFluP_sum' ya que no la necesitamos más.
-result = result.drop(columns=['LinFluP_sum'])
+# Finalmente, eliminamos las columnas 'LinFluP_sum' y 'capacity_sum' ya que no las necesitamos más.
+result = result.drop(columns=['LinFluP_sum', 'capacity_sum'])
 
 # Si también quieres eliminar la columna 'parallel_id', puedes hacerlo así:
 result = result.drop(columns=['parallel_id'])
@@ -256,7 +257,7 @@ result = result.drop(columns=['parallel_id'])
 plplin_copy.set_index(['Hidro', 'time', 'id'], inplace=True)
 result.set_index(['Hidro', 'time', 'id'], inplace=True)
 
-plplin_copy.update(result['LinFluP'])
+plplin_copy.update(result[['LinFluP', 'capacity']])
 
 # Restablecer el índice
 plplin_copy.reset_index(inplace=True)
