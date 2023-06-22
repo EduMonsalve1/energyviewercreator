@@ -212,11 +212,16 @@ for _, group in groups:
     parallel_lines.append(group.values.tolist())
 for sublist in parallel_lines:
     first_element = sublist[0]
+    suma_maxab=0
+    suma_maxba=0
     linesfinal.loc[linesfinal['id'] == first_element, 'LinName'] += "- mixed"
     linesfinal.loc[linesfinal['id'] == first_element, 'active'] = 1
-
     for element in sublist[1:]:
         linesfinal.loc[linesfinal['id'] == element, 'active'] = 0
+        suma_maxab+=linesfinal.loc[linesfinal['id'] == element, 'max_flow_a_b'].values[0]
+        suma_maxba+=linesfinal.loc[linesfinal['id'] == element, 'max_flow_b_a'].values[0]
+    linesfinal.loc[linesfinal['id'] == first_element, 'max_flow_a_b']+=suma_maxab
+    linesfinal.loc[linesfinal['id'] == first_element, 'max_flow_b_a']+=suma_maxba
 
 # Crear un array con todos los primeros elementos de las listas en 'parallel_lines'
 first_elements = np.array([x[0] for x in parallel_lines])
