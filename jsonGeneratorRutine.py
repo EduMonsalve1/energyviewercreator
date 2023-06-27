@@ -210,18 +210,20 @@ groups = filtered_lines.groupby(['bus_a', 'bus_b'])['id']
 parallel_lines = []
 for _, group in groups:
     parallel_lines.append(group.values.tolist())
+lnesfinal_aux = linesfinal.copy()
 for sublist in parallel_lines:
     first_element = sublist[0]
     suma_maxab=0
     suma_maxba=0
     linesfinal.loc[linesfinal['id'] == first_element, 'LinName'] += "- mixed"
+    for element in sublist:
+        if linesfinal.loc[linesfinal['id'] == element, 'active'].values[0] == 1: 
+            suma_maxab+=linesfinal.loc[linesfinal['id'] == element, 'max_flow_a_b'].values[0]
+            suma_maxba+=linesfinal.loc[linesfinal['id'] == element, 'max_flow_b_a'].values[0]
+            linesfinal.loc[linesfinal['id'] == element, 'active'] = 0
     linesfinal.loc[linesfinal['id'] == first_element, 'active'] = 1
-    for element in sublist[1:]:
-        linesfinal.loc[linesfinal['id'] == element, 'active'] = 0
-        suma_maxab+=linesfinal.loc[linesfinal['id'] == element, 'max_flow_a_b'].values[0]
-        suma_maxba+=linesfinal.loc[linesfinal['id'] == element, 'max_flow_b_a'].values[0]
-    linesfinal.loc[linesfinal['id'] == first_element, 'max_flow_a_b']+=suma_maxab
-    linesfinal.loc[linesfinal['id'] == first_element, 'max_flow_b_a']+=suma_maxba
+    linesfinal.loc[linesfinal['id'] == first_element, 'max_flow_a_b']=suma_maxab
+    linesfinal.loc[linesfinal['id'] == first_element, 'max_flow_b_a']=suma_maxba
 
 # Crear un array con todos los primeros elementos de las listas en 'parallel_lines'
 first_elements = np.array([x[0] for x in parallel_lines])
@@ -229,16 +231,17 @@ plplin_copy = plplin.copy()
 # Añadir "- mixed" al final de los valores en 'LinName' donde 'id' hace match con el primer valor de cada lista en 'parallel_lines'
 plplin_copy['LinName'] = np.where(plplin_copy['id'].isin(first_elements), plplin_copy['LinName'] + '- mixed', plplin_copy['LinName'])
 
+plplin_copy = pd.merge(plplin_copy, lnesfinal_aux[['id', 'active']], on='id', how='left')
+
 # Crear un nuevo dataframe donde cada fila es una lista en 'parallel_lines'
 parallel_df = plplin_copy[plplin_copy['id'].isin([item for sublist in parallel_lines for item in sublist])].copy()
-
 
 # Creamos una columna "parallel_id" que tenga el primer id de la línea paralela correspondiente para cada fila.
 parallel_dict = {id_par: par[0] for par in parallel_lines for id_par in par}
 parallel_df['parallel_id'] = parallel_df['id'].map(parallel_dict)
 
 # Ahora podemos agrupar por 'Hidro', 'time' y 'parallel_id', y sumar 'LinFluP' y 'capacity' dentro de cada grupo.
-grouped_df = parallel_df.groupby(['Hidro', 'time', 'parallel_id'])[['LinFluP', 'capacity']].sum().reset_index()
+grouped_df = parallel_df[parallel_df['active'] == 1].groupby(['Hidro', 'time', 'parallel_id'])[['LinFluP', 'capacity']].sum().reset_index()
 
 # Primero, fusionamos 'parallel_df' con 'grouped_df'.
 result = pd.merge(parallel_df, grouped_df, on=['Hidro', 'time', 'parallel_id'], how='left', suffixes=('', '_sum'))
