@@ -8,7 +8,7 @@ import json
 import os
 
 
-# Ubicación de la carpeta con los archivos
+# Ubicación de las carpetas con los archivos
 
 path_corr=False
 path_data=None
