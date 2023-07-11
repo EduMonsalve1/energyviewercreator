@@ -7,9 +7,7 @@ import shutil
 import json
 import os
 
-
 # Ubicación de las carpetas con los archivos
-
 path_corr=False
 path_data=None
 
