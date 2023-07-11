@@ -4,6 +4,7 @@ import numpy as np
 import random
 import pyproj
 import shutil
+import copy
 import json
 import os
 
