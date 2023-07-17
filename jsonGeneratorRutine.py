@@ -4,12 +4,11 @@ import numpy as np
 import random
 import pyproj
 import shutil
+import copy
 import json
 import os
 
-
 # Ubicación de las carpetas con los archivos
-
 path_corr=False
 path_data=None
 
@@ -18,11 +17,10 @@ while not path_corr:
     aux=input(f"Se ha ingresado la siguiente ruta: '{path_data}', de ser correcta, escriba 'y', si no, escriba 'n' y vuelva a agregar el path \n")
     if aux == "y":
         path_corr=True
-
 print("en hora buena\n")
-
-namedata=input("A continuación, escriba el nombre de la carpeta en donde se encontrarán los archivos Json que se crearán\n")
-
+print()
+namedata = os.path.basename(path_data[:-1])
+print("A continuación, el nombre de la carpeta en donde se encontrarán los archivos Json se llamará",namedata)
 print("---------------------------------- Iniciando Carga de archivos-----------------------------------\n")
 
 print("Este proceso puede demorar unos minutos dependiendo del tamaño de los archivos\n")
@@ -121,6 +119,9 @@ reservoirs['Hidro']=reservoirs['Hidro'].str.replace(" ","")
 indexres = reservoirs[['id','EmbName']].drop_duplicates(keep="first").reset_index(drop=True)
 
 junctionsinfo=centralsinfo[centralsinfo['type'].isin(["E",'S','R'])].reset_index(drop=True)
+junctionsinfo['serie_hidro_gen']=(junctionsinfo['serie_hidro_gen'].apply(str)).apply(lambda x:x.replace(',','.')).apply(float)
+junctionsinfo['serie_hidro_ver']=(junctionsinfo['serie_hidro_ver'].apply(str)).apply(lambda x:x.replace(',','.')).apply(float)
+
 reservoirsinfo=centralsinfo[centralsinfo['type'].isin(["E"])].reset_index(drop=True)
 reservoirsinfo.rename(columns={'CenName':'EmbName'}, inplace=True)
 
@@ -130,7 +131,6 @@ for i, emb_name in enumerate(reservoirsinfo['EmbName']):
         reservoirsinfo.at[i, 'id'] = indexres.at[idx, 'id']
 
 print("--------Archivo Reservoirs Cargado-------------\n")
-
 
 print("--------Cargando Archivo indhor-------------\n")
 indhor = pd.read_csv(path_data+'indhor.csv',encoding='latin-1')
