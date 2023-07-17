@@ -749,10 +749,11 @@ for x in range(len(junctionsinfo)): # Para cada junction
 	aux.append(latitud)
 	aux.append(1)
 	aux.append(0)
+	aux.append(junctionsinfo['bus_id'][x])
 	
 	junctionhydricfilas_aux.append(aux)
 
-junctionhydric=pd.DataFrame(junctionhydricfilas_aux,columns=['id','name','logitude','latitude','active','drainage'])
+junctionhydric=pd.DataFrame(junctionhydricfilas_aux,columns=['id','name','logitude','latitude','active','drainage','bus_id'])
 
 junctionhydric.to_json(hydricTopology+"/junctions.json",orient='records')
 
