@@ -350,7 +350,6 @@ def percentilCM():
 
 percentilCM()
 
-
 print("Creando archivos para Grafico Percentiles flujos de lineas de transmisión")
 def percentilFL():
     datos_lineas=plplin[['id','Hidro', 'time', 'LinName', 'LinFluP', 'capacity']]
