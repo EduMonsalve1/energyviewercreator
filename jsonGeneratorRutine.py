@@ -11,7 +11,7 @@ import os
 
 # Ubicación de las carpetas con los archivos
 path_corr1,path_corr2=False,False
-print("Bienvenido a la función de procesamiento de Base de Datos y Resultados PLP")
+print("\nBienvenido a la función de procesamiento de Base de Datos y Resultados PLP")
 Choice = input("Desea correr un caso ya creado o un caso nuevo con formato '.zip' ( 1 / 2 )?\n")
 print()
 if Choice == '1':
@@ -69,6 +69,7 @@ if Choice == '2':
                 shutil.copyfileobj(archivo_gz, archivo_descomprimido)
         os.remove(ruta_archivo_gz)
     print(f"  Descompresión del archivo completada exitosamente\n")
+    os.remove(Zip_path)
 namedata = os.path.basename(path_data)
 print("A continuación, el nombre de la carpeta en donde se encontrarán\nlos archivos Json se llamará",namedata)
 print("---------------------------------- Iniciando Carga de archivos-----------------------------------\n")
