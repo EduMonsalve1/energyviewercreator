@@ -13,10 +13,13 @@ import os
 path_corr1,path_corr2=False,False
 print("Bienvenido a la función de procesamiento de Base de Datos y Resultados PLP")
 Choice = input("Desea correr un caso ya creado o un caso nuevo con formato '.zip' ( 1 / 2 )?\n")
+print()
 if Choice == '1':
     while not path_corr1:
         path_data=input("Ingrese la ruta de la carpeta en donde se ubican los archivos CSV: \n")
+        print()
         aux=input(f"Se ha ingresado la siguiente ruta: '{path_data}',\n de ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
+        print()
         if aux == "y":
             path_corr1=True
 if Choice == '2':
@@ -29,15 +32,18 @@ if Choice == '2':
             Cou += 1
         print()
         num_zip = input("Seleccione el caso PLP que desea procesar: \n")
+        print()
         Zip = archivos_zip[int(num_zip)-1]
         ruta_actual = os.getcwd()
         Zip_path = os.path.join(ruta_actual,Zip)
         aux = input(f"Se ha ingresado la siguiente ruta: '{Zip_path}',\n de ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
+        print()
         if aux == "y":
             path_corr1=True
     while not path_corr2:
-        Folder_IPLP = input("Ingrese la ruta de la carpeta de destino: \n")
+        Folder_IPLP = input("Ingrese la ruta de la carpeta de destino, donde se creará el nuevo caso PLP:\n")
         aux = input(f"Se ha ingresado la siguiente ruta: '{Folder_IPLP}',\n de ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
+        print()
         if aux == "y":
             path_corr2=True
     Folder, Zip_file = os.path.split(Zip_path)
@@ -47,7 +53,7 @@ if Choice == '2':
     Destino = os.path.basename(Folder_IPLP)
     print(f"  Se procede a descomprimir el archivo '{Zip_file}'")
     print(f"  La carpeta de destino de los archivos CSV es '{Destino}'")
-    print("----------Iniciando descompresión de archivos----------")
+    print("  Se inicia la descompresión del archivo '.zip'")
     # Crear la carpeta de destino si no existe
     if not os.path.exists(path_data): os.makedirs(path_data)
     # Extraer todos los archivos del ZIP en la carpeta de destino
@@ -63,9 +69,8 @@ if Choice == '2':
                 shutil.copyfileobj(archivo_gz, archivo_descomprimido)
         os.remove(ruta_archivo_gz)
     print(f"  Descompresión del archivo completada exitosamente\n")
-print("en hora buena\n")
 namedata = os.path.basename(path_data)
-print("A continuación, el nombre de la carpeta en donde se encontrarán los archivos Json se llamará",namedata)
+print("A continuación, el nombre de la carpeta en donde se encontrarán\nlos archivos Json se llamará",namedata)
 print("---------------------------------- Iniciando Carga de archivos-----------------------------------\n")
 
 print("Este proceso puede demorar unos minutos dependiendo del tamaño de los archivos\n")
