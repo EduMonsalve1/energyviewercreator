@@ -13,20 +13,17 @@ import os
 path_corr1,path_corr2,path_corr3=False,False,False
 print("\nBienvenido a la función de procesamiento de Base de Datos y Resultados PLP")
 Choice = input("Desea correr un caso ya creado o un caso nuevo con formato '.zip' ( 1 / 2 )?\n")
-print()
 if Choice == '1':
     while not path_corr1:
-        path_data=input("Ingrese la ruta de la carpeta en donde se ubican los archivos CSV: \n")
-        print()
+        path_data=input("\nIngrese la ruta de la carpeta en donde se ubican los archivos CSV: \n")
         aux=input(f"\nSe ha ingresado la siguiente ruta: '{path_data}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
-        print()
         if aux == "y":
             path_corr1=True
 if Choice == '2':
     while not path_corr1:
         archivos_zip = [archivo for archivo in os.listdir('.') if archivo.endswith('.zip')]
         Cou = 1
-        print("Se obtiene la lista de todos los archivos PLP '.zip' disponibles en el directorio actual")
+        print("\nSe obtiene la lista de todos los archivos PLP '.zip' disponibles en el directorio actual")
         for zips in archivos_zip:
             print(f"({Cou})",zips)
             Cou += 1
@@ -64,7 +61,7 @@ if Choice == '2':
             with open(descomprimido, 'wb') as archivo_descomprimido:
                 shutil.copyfileobj(archivo_gz, archivo_descomprimido)
         os.remove(ruta_archivo_gz)
-    print(f"  Descompresión del archivo completada exitosamente\n")
+    print(f"  Descompresión del archivo completada exitosamente")
     os.remove(Zip_path)
 while not path_corr3:
     Folder_Json = input("\nIngrese la ruta de la carpeta de destino, donde se enviará la carpeta con archivos Json:\n")
@@ -889,7 +886,7 @@ json_folder_path = os.path.join(current_directory, namedata)
 zip_path = os.path.join(current_directory, namedata[5:])
 shutil.make_archive(zip_path, "zip", json_folder_path)
 
-print(f"Se le aplica un cambio de nombre para facilitar la carga del caso ({namedata[5:]}.zip)")
+print(f"\nSe le aplica un cambio de nombre para facilitar la carga del caso ({namedata[5:]}.zip)")
 
 # Ruta de destino para mover la carpeta
 Destino_Json = Folder_Json
