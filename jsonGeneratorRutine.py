@@ -18,7 +18,7 @@ if Choice == '1':
         path_data=input("Ingrese la ruta de la carpeta en donde se ubican los archivos CSV: \n")
         aux=input(f"Se ha ingresado la siguiente ruta: '{path_data}',\n de ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
         if aux == "y":
-            path_corr=True
+            path_corr1=True
 if Choice == '2':
     while not path_corr1:
         archivos_zip = [archivo for archivo in os.listdir('.') if archivo.endswith('.zip')]
