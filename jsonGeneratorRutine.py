@@ -890,8 +890,10 @@ print(f"\nSe le aplica un cambio de nombre para facilitar la carga del caso ({na
 
 # Ruta de destino para mover la carpeta
 Destino_Json = Folder_Json
+json_Folder = os.path.join(Destino_Json, namedata)
 # Verificar si el directorio de destino ya existe, para eliminarlo en dicho caso
-if os.path.exists(Destino_Json): shutil.rmtree(Destino_Json)
+if os.path.exists(json_Folder): 
+    shutil.rmtree(json_Folder)
 # Mover la carpeta
 shutil.move(json_folder_path, Destino_Json)
 
