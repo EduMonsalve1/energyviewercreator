@@ -883,7 +883,7 @@ print("Esto puede tardar entre 3 a 5 minutos debido al tamaño de los archivos")
 # Se comprime el archivo de salidas .json
 current_directory = os.getcwd()
 json_folder_path = os.path.join(current_directory, namedata)
-zip_path = os.path.join(current_directory, namedata[5:])
+zip_path = os.path.join(current_directory, namedata[5:]) # Cambiar carpeta donde dirigir el '.zip'
 shutil.make_archive(zip_path, "zip", json_folder_path)
 
 print(f"\nSe le aplica un cambio de nombre para facilitar la carga del caso ({namedata[5:]}.zip)")
