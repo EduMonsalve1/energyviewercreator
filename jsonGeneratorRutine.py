@@ -1,32 +1,77 @@
 from pathlib import Path
 import pandas as pd
 import numpy as np
+import zipfile
 import random
 import pyproj
 import shutil
-import copy
+import gzip
 import json
 import os
 
 # Ubicación de las carpetas con los archivos
-path_corr=False
-path_data=None
-
-while not path_corr:
-    path_data=input("Ingrese la ruta de la carpeta en donde se ubican los archivos CSV: \n")
-    aux=input(f"Se ha ingresado la siguiente ruta: '{path_data}', de ser correcta, escriba 'y', si no, escriba 'n' y vuelva a agregar el path \n")
-    if aux == "y":
-        path_corr=True
+path_corr1,path_corr2=False,False
+print("Bienvenido a la función de procesamiento de Base de Datos y Resultados PLP")
+Choice = input("Desea correr un caso ya creado o un caso nuevo con formato '.zip' ( 1 / 2 )?\n")
+if Choice == '1':
+    while not path_corr1:
+        path_data=input("Ingrese la ruta de la carpeta en donde se ubican los archivos CSV: \n")
+        aux=input(f"Se ha ingresado la siguiente ruta: '{path_data}',\n de ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
+        if aux == "y":
+            path_corr=True
+if Choice == '2':
+    while not path_corr1:
+        archivos_zip = [archivo for archivo in os.listdir('.') if archivo.endswith('.zip')]
+        Cou = 1
+        print("Se obtiene la lista de todos los archivos PLP '.zip' disponibles en el directorio actual")
+        for zips in archivos_zip:
+            print(f"({Cou})",zips)
+            Cou += 1
+        print()
+        num_zip = input("Seleccione el caso PLP que desea procesar: \n")
+        Zip = archivos_zip[int(num_zip)-1]
+        ruta_actual = os.getcwd()
+        Zip_path = os.path.join(ruta_actual,Zip)
+        aux = input(f"Se ha ingresado la siguiente ruta: '{Zip_path}',\n de ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
+        if aux == "y":
+            path_corr1=True
+    while not path_corr2:
+        Folder_IPLP = input("Ingrese la ruta de la carpeta de destino: \n")
+        aux = input(f"Se ha ingresado la siguiente ruta: '{Folder_IPLP}',\n de ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
+        if aux == "y":
+            path_corr2=True
+    Folder, Zip_file = os.path.split(Zip_path)
+    Zip_name = os.path.splitext(Zip_file)[0]
+    # Ruta de destino para guardar los archivos descomprimidos
+    path_data = os.path.join(Folder_IPLP,Zip_name)
+    Destino = os.path.basename(Folder_IPLP)
+    print(f"  Se procede a descomprimir el archivo '{Zip_file}'")
+    print(f"  La carpeta de destino de los archivos CSV es '{Destino}'")
+    print("----------Iniciando descompresión de archivos----------")
+    # Crear la carpeta de destino si no existe
+    if not os.path.exists(path_data): os.makedirs(path_data)
+    # Extraer todos los archivos del ZIP en la carpeta de destino
+    with zipfile.ZipFile(Zip_path, 'r') as zip_ref: zip_ref.extractall(path_data)
+    PLPs = ['plplin.csv.gz','plpbar.csv.gz','plpcen.csv.gz','plpemb.csv.gz']
+    for plp in PLPs:
+        #ruta_archivo_gz = os.path.join(ruta_sin_extension,plp)
+        ruta_archivo_gz = os.path.join(path_data,plp)
+        descomprimido = ruta_archivo_gz[:-3]  # Elimina la extensión .gz
+        # Descomprimir el archivo .gz
+        with gzip.open(ruta_archivo_gz, 'rb') as archivo_gz:
+            with open(descomprimido, 'wb') as archivo_descomprimido:
+                shutil.copyfileobj(archivo_gz, archivo_descomprimido)
+        os.remove(ruta_archivo_gz)
+    print(f"  Descompresión del archivo completada exitosamente\n")
 print("en hora buena\n")
-print()
-namedata = os.path.basename(path_data[:-1])
+namedata = os.path.basename(path_data)
 print("A continuación, el nombre de la carpeta en donde se encontrarán los archivos Json se llamará",namedata)
 print("---------------------------------- Iniciando Carga de archivos-----------------------------------\n")
 
 print("Este proceso puede demorar unos minutos dependiendo del tamaño de los archivos\n")
 
 print("--------Cargando Archivo plpbar-------------\n")
-plpbar=pd.read_csv(path_data+'plpbar.csv')
+plpbar=pd.read_csv(os.path.join(path_data,'plpbar.csv'))
 plpbar.columns=["Hidro","time","TipoEtapa","id","BarName","CMgBar","DemBarP","DemBarE","PerBarP","PerBarE","BarRetP","BarRetE"]
 plpbar['BarName']=plpbar['BarName'].str.replace(" ","")
 plpbar["Hidro"] = plpbar["Hidro"].str.replace(" ", "")
@@ -37,7 +82,7 @@ print("--------Archivo plpbar cargado-------------\n")
 
 
 print("--------Cargando Archivo de ubicaciones Ubibar-------------\n")
-ubibar=pd.read_csv(path_data+'ubibar.csv',sep=';')
+ubibar=pd.read_csv(os.path.join(path_data,'ubibar.csv'),sep=';')
 ubibar=ubibar.drop('ID',axis=1)
 ubibar['LATITUD']=ubibar['LATITUD'].apply(lambda x:x.replace(',','.')).apply(float)
 ubibar['LONGITUD']=ubibar['LONGITUD'].apply(lambda x:x.replace(',','.')).apply(float)
@@ -46,7 +91,7 @@ ubibar['BarName']=ubibar['BarName'].str.replace(" ","")
 print("--------Archivo de ubicaciones Ubibar Cargado-------------\n")
 
 print("--------Cargando Archivo plpcen-------------\n")
-plpcen=pd.read_csv(path_data+'plpcen.csv')
+plpcen=pd.read_csv(os.path.join(path_data,'plpcen.csv'))
 plpcen.columns=["Hidro","time","TipoEtapa","id","CenName","tipo","bus_id","BarName","CenQgen","CenPgen","CenEgen","CenInyP","CenInyE","CenRen","CenCVar","CenCostOp","CenPMax"]
 plpcen['CenName']=plpcen["CenName"].str.replace(" ","")
 plpcen=plpcen.drop(["CenEgen","CenInyP","CenInyE","CenRen","CenCostOp","CenPMax"],axis=1)
@@ -59,7 +104,7 @@ print("--------Archivo plpcen cargado-------------\n")
 
 
 print("--------Cargando Archivo centralesinfo-------------\n")
-centralsinfo=pd.read_csv(path_data+'centralesinfo.csv',sep=';')
+centralsinfo=pd.read_csv(os.path.join(path_data,'centralesinfo.csv'),sep=';')
 centralsinfo.columns=['id','CenName','type','CVar','effinciency','bus_id','serie_hidro_gen','serie_hidro_ver','min_power','max_power',"VembIn","VembFin","VembMin","VembMax","cotaMínima"]
 
 cols = ['min_power', 'max_power', 'effinciency', 'CVar', 'VembIn', 'VembFin', 'VembMin', 'VembMax', 'cotaMínima']
@@ -67,9 +112,9 @@ centralsinfo['CenName'] = centralsinfo["CenName"].str.replace(" ", "")
 for col in cols:
     centralsinfo[col] = centralsinfo[col].replace(",", ".", regex=True)
 
-hydric_adicional = pd.read_csv(path_data+'hydric_adicional.csv',sep=";")
+hydric_adicional = pd.read_csv(os.path.join(path_data,'hydric_adicional.csv'),sep=";")
 
-tiposcentrales=pd.read_csv(path_data+'centralestype.csv', encoding="latin-1").rename(columns={'cen_name':'CenName'})
+tiposcentrales=pd.read_csv(os.path.join(path_data,'centralestype.csv'), encoding="latin-1").rename(columns={'cen_name':'CenName'})
 typecentrals=indexcen.merge(tiposcentrales,on='CenName')
 
 for x in range(len(indexcen['id'])):
@@ -83,7 +128,7 @@ print("--------Archivo centralesinfo cargado-------------\n")
 
 
 print("--------Cargando Archivo plplin-------------\n")
-plplin=pd.read_csv(path_data+'plplin.csv')
+plplin=pd.read_csv(os.path.join(path_data,'plplin.csv'))
 # Cambiando los nombres de las columnas
 plplin.columns=["Hidro","time","TipoEtapa","id","LinName","bus_a","bus_b","LinFluP","LinFluE","capacity","LinUso","LinPerP","LinPerE","LinPer2P","LinPer2E","LinITP","LinITE"]
 plplin['LinName']=plplin['LinName'].str.replace(" ","")
@@ -96,7 +141,7 @@ print("--------Archivo plplin Cargado-------------\n")
 
 
 print("--------Cargando Archivo linesinfo-------------\n")
-linesinfo=pd.read_csv(path_data+'linesinfo.csv',sep=';')
+linesinfo=pd.read_csv(os.path.join(path_data,'linesinfo.csv'),sep=';')
 linesinfo.columns=["id","LinName","bus_a","bus_b","max_flow_a_b","max_flow_b_a","voltage","r","x","segments","active"]
 linesinfo['LinName']=linesinfo['LinName'].str.replace(" ","")
 linesinfo['max_flow_a_b']=(linesinfo["max_flow_a_b"].apply(str)).apply(lambda x:x.replace(',','.')).apply(float)
@@ -111,7 +156,7 @@ print("--------Archivo linesinfo Cargado-------------\n")
 
 print("--------Cargando Archivo Reservoirs-------------\n")
 
-reservoirs = pd.read_csv(path_data+'plpemb.csv')
+reservoirs = pd.read_csv(os.path.join(path_data,'plpemb.csv'))
 reservoirs.rename(columns={'Bloque': 'time', 'EmbNum': 'id', 'EmbNom': 'EmbName'}, inplace=True)
 reservoirs['EmbName']=reservoirs['EmbName'].str.replace(" ","")
 reservoirs['Hidro']=reservoirs['Hidro'].str.replace(" ","")
@@ -133,7 +178,7 @@ for i, emb_name in enumerate(reservoirsinfo['EmbName']):
 print("--------Archivo Reservoirs Cargado-------------\n")
 
 print("--------Cargando Archivo indhor-------------\n")
-indhor = pd.read_csv(path_data+'indhor.csv',encoding='latin-1')
+indhor = pd.read_csv(os.path.join(path_data,'indhor.csv'),encoding='latin-1')
 print("--------Archivo indhor Cargado-------------\n")
 
 # Creando directorios
