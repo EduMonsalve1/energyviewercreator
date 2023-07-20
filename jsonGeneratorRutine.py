@@ -18,7 +18,7 @@ if Choice == '1':
     while not path_corr1:
         path_data=input("Ingrese la ruta de la carpeta en donde se ubican los archivos CSV: \n")
         print()
-        aux=input(f"Se ha ingresado la siguiente ruta: '{path_data}',\n de ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
+        aux=input(f"Se ha ingresado la siguiente ruta: '{path_data}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
         print()
         if aux == "y":
             path_corr1=True
@@ -36,13 +36,13 @@ if Choice == '2':
         Zip = archivos_zip[int(num_zip)-1]
         ruta_actual = os.getcwd()
         Zip_path = os.path.join(ruta_actual,Zip)
-        aux = input(f"Se ha ingresado la siguiente ruta: '{Zip_path}',\n de ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
+        aux = input(f"Se ha ingresado la siguiente ruta: '{Zip_path}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
         print()
         if aux == "y":
             path_corr1=True
     while not path_corr2:
         Folder_IPLP = input("Ingrese la ruta de la carpeta de destino, donde se creará el nuevo caso PLP:\n")
-        aux = input(f"Se ha ingresado la siguiente ruta: '{Folder_IPLP}',\n de ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
+        aux = input(f"Se ha ingresado la siguiente ruta: '{Folder_IPLP}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
         print()
         if aux == "y":
             path_corr2=True
@@ -71,7 +71,8 @@ if Choice == '2':
     print(f"  Descompresión del archivo completada exitosamente\n")
     os.remove(Zip_path)
 namedata = os.path.basename(path_data)
-print("A continuación, el nombre de la carpeta en donde se encontrarán\nlos archivos Json se llamará",namedata)
+print(f"A continuación, el nombre de la carpeta en donde se encontrarán\nlos archivos Json se llamará '{namedata}'")
+print()
 print("---------------------------------- Iniciando Carga de archivos-----------------------------------\n")
 
 print("Este proceso puede demorar unos minutos dependiendo del tamaño de los archivos\n")
