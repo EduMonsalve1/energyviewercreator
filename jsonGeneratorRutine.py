@@ -18,7 +18,7 @@ if Choice == '1':
     while not path_corr1:
         path_data=input("Ingrese la ruta de la carpeta en donde se ubican los archivos CSV: \n")
         print()
-        aux=input(f"Se ha ingresado la siguiente ruta: '{path_data}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
+        aux=input(f"\nSe ha ingresado la siguiente ruta: '{path_data}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
         print()
         if aux == "y":
             path_corr1=True
@@ -36,13 +36,13 @@ if Choice == '2':
         Zip = archivos_zip[int(num_zip)-1]
         ruta_actual = os.getcwd()
         Zip_path = os.path.join(ruta_actual,Zip)
-        aux = input(f"Se ha ingresado la siguiente ruta: '{Zip_path}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
+        aux = input(f"\nSe ha ingresado la siguiente ruta: '{Zip_path}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
         print()
         if aux == "y":
             path_corr1=True
     while not path_corr2:
         Folder_IPLP = input("Ingrese la ruta de la carpeta de destino, donde se creará el nuevo caso PLP:\n")
-        aux = input(f"Se ha ingresado la siguiente ruta: '{Folder_IPLP}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
+        aux = input(f"\nSe ha ingresado la siguiente ruta: '{Folder_IPLP}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
         print()
         if aux == "y":
             path_corr2=True
@@ -76,7 +76,7 @@ while not path_corr3:
     print()
     if aux == "y":
         path_corr3=True
-namedata = f"Json_{os.path.basename(path_data)}"
+namedata = f"Json_{os.path.basename(path_data[5:])}"
 print(f"A continuación, el nombre de la carpeta en donde se encontrarán\nlos archivos Json se llamará '{namedata}'")
 print()
 print("---------------------------------- Iniciando Carga de archivos-----------------------------------\n")
@@ -885,14 +885,15 @@ waterwayshydric=pd.DataFrame(junctionhydricfilas_aux,columns=["id","name","type"
 waterwayshydric.to_json(hydricTopology+"/waterways.json",orient='records')
 
 print("Archivos listos para visualizar ubicados en la ruta en donde se encuentra este archivo py")
-
+print()
+print(f"Se inicia la compresión de la carpeta de visualización '{namedata}' en formato '.zip'")
+print("Esto puede tardar entre 3 a 5 minutos debido al tamaño de los archivos")
 # Se comprime el archivo de salidas .json
 current_directory = os.getcwd()
 json_folder_path = os.path.join(current_directory, namedata)
 zip_path = os.path.join(current_directory, namedata[5:])
 shutil.make_archive(zip_path, "zip", json_folder_path)
 
-print(f"Se comprime la carpeta de visualización '{namedata}' en formato '.zip'")
 print(f"Se le aplica un cambio de nombre para facilitar la carga del caso ({namedata[5:]}.zip)")
 
 # Ruta de destino para mover la carpeta
