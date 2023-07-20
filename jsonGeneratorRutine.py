@@ -30,20 +30,16 @@ if Choice == '2':
         for zips in archivos_zip:
             print(f"({Cou})",zips)
             Cou += 1
-        print()
-        num_zip = input("Seleccione el caso PLP que desea procesar: \n")
-        print()
+        num_zip = input("\nSeleccione el caso PLP que desea procesar: \n")
         Zip = archivos_zip[int(num_zip)-1]
         ruta_actual = os.getcwd()
         Zip_path = os.path.join(ruta_actual,Zip)
         aux = input(f"\nSe ha ingresado la siguiente ruta: '{Zip_path}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
-        print()
         if aux == "y":
             path_corr1=True
     while not path_corr2:
-        Folder_IPLP = input("Ingrese la ruta de la carpeta de destino, donde se creará el nuevo caso PLP:\n")
+        Folder_IPLP = input("\nIngrese la ruta de la carpeta de destino, donde se creará el nuevo caso PLP:\n")
         aux = input(f"\nSe ha ingresado la siguiente ruta: '{Folder_IPLP}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
-        print()
         if aux == "y":
             path_corr2=True
     Folder, Zip_file = os.path.split(Zip_path)
@@ -71,12 +67,11 @@ if Choice == '2':
     print(f"  Descompresión del archivo completada exitosamente\n")
     os.remove(Zip_path)
 while not path_corr3:
-    Folder_Json = input("Ingrese la ruta de la carpeta de destino, donde se enviará la carpeta con archivos Json:\n")
-    aux = input(f"Se ha ingresado la siguiente ruta: '{Folder_Json}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
-    print()
+    Folder_Json = input("\nIngrese la ruta de la carpeta de destino, donde se enviará la carpeta con archivos Json:\n")
+    aux = input(f"\nSe ha ingresado la siguiente ruta: '{Folder_Json}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
     if aux == "y":
         path_corr3=True
-namedata = f"Json_{os.path.basename(path_data[5:])}"
+namedata = f"Json_{os.path.basename(path_data)[5:]}"
 print(f"A continuación, el nombre de la carpeta en donde se encontrarán\nlos archivos Json se llamará '{namedata}'")
 print()
 print("---------------------------------- Iniciando Carga de archivos-----------------------------------\n")
