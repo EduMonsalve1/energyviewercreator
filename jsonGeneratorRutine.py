@@ -10,7 +10,7 @@ import json
 import os
 
 # Ubicación de las carpetas con los archivos
-path_corr1,path_corr2=False,False
+path_corr1,path_corr2,path_corr3=False,False,False
 print("\nBienvenido a la función de procesamiento de Base de Datos y Resultados PLP")
 Choice = input("Desea correr un caso ya creado o un caso nuevo con formato '.zip' ( 1 / 2 )?\n")
 print()
@@ -50,9 +50,9 @@ if Choice == '2':
     Zip_name = os.path.splitext(Zip_file)[0]
     # Ruta de destino para guardar los archivos descomprimidos
     path_data = os.path.join(Folder_IPLP,Zip_name)
-    Destino = os.path.basename(Folder_IPLP)
+    Destino_casos = os.path.basename(Folder_IPLP)
     print(f"  Se procede a descomprimir el archivo '{Zip_file}'")
-    print(f"  La carpeta de destino de los archivos CSV es '{Destino}'")
+    print(f"  La carpeta de destino de los archivos CSV es '{Destino_casos}'")
     print("  Se inicia la descompresión del archivo '.zip'")
     # Crear la carpeta de destino si no existe
     if not os.path.exists(path_data): os.makedirs(path_data)
@@ -70,7 +70,13 @@ if Choice == '2':
         os.remove(ruta_archivo_gz)
     print(f"  Descompresión del archivo completada exitosamente\n")
     os.remove(Zip_path)
-namedata = os.path.basename(path_data)
+while not path_corr3:
+    Folder_Json = input("Ingrese la ruta de la carpeta de destino, donde se enviará la carpeta con archivos Json:\n")
+    aux = input(f"Se ha ingresado la siguiente ruta: '{Folder_Json}',\nde ser correcta escriba 'y', en caso contrario escriba 'n' y vuelva a agregar el path\n")
+    print()
+    if aux == "y":
+        path_corr3=True
+namedata = f"Json_{os.path.basename(path_data)}"
 print(f"A continuación, el nombre de la carpeta en donde se encontrarán\nlos archivos Json se llamará '{namedata}'")
 print()
 print("---------------------------------- Iniciando Carga de archivos-----------------------------------\n")
@@ -250,8 +256,6 @@ nlin=len(indexlin['id'])
 # Número de Reservoirs
 nres = len(reservoirs['EmbName'].unique())
 
-
-
 # Mixed de Lineas Previcionales
 
 filtered_lines = linesfinal[linesfinal.duplicated(subset=['bus_a', 'bus_b'], keep=False)]
@@ -317,7 +321,6 @@ plplin_copy.update(result[['LinFluP', 'capacity']])
 plplin_copy.reset_index(inplace=True)
 
 plplin = plplin_copy
-
 
 # Función generadora de latitudes y longitudes
 
@@ -645,7 +648,6 @@ print("Creando datos topologicos Central")
 		(?) cvnc <unknown>: parámetro no identificado
 		(?) cvc <unknown>: parámetro no identificado
 		(?) entry_date <unknown>: parámetro no identificado
-
 '''
 
 centralselectricfilas_aux=[]
@@ -699,7 +701,6 @@ print("Creando datos topologicos Lineas")
 		(? )segments <int>: parámetro no identificado
 		(?) entry_date <unknown>: parámetro no identificado
 		(?) exit_date <unknown>: parámetro no identificado
-
 '''
 
 lineselectricfilas_aux=[]
@@ -746,10 +747,7 @@ print("Creando datos topologicos Reservoirs")
 		(?) hyd_independant <bool>: parámetro no identificado
 		(?) future_cost <unknown>: parámetro no identificado
 		(?) cmin <unknown>: cota m.s.n.m mínima
-
-
 '''
-
 
 reshydricfilas_aux=[]
 for x in range(nres): # Para cada linea
@@ -785,8 +783,6 @@ print("Creando datos topologicos Junctions")
 	latitude <float>
 	active <bool>: indica si la barra está activa
 	drainage <bool>: parámetro no identificado
-
-
 '''
 
 junctionhydricfilas_aux=[]
@@ -820,8 +816,8 @@ print("Creando datos topologicos Waterways")
 		(?) fmax <unknown>: parámetro no identificado
 		(?) cvar <unknown>: parámetro no identificado 
         (?) delay <unknown>: parámetro no identificado
-
 '''
+
 junctionhydricfilas_aux=[]
 countid=1
 for x in range(len(junctionsinfo)):
@@ -892,17 +888,17 @@ print("Archivos listos para visualizar ubicados en la ruta en donde se encuentra
 
 # Se comprime el archivo de salidas .json
 current_directory = os.getcwd()
-folder_path = os.path.join(current_directory, namedata)
-zip_path = folder_path
-shutil.make_archive(zip_path, "zip", folder_path)
+json_folder_path = os.path.join(current_directory, namedata)
+zip_path = os.path.join(current_directory, namedata[5:])
+shutil.make_archive(zip_path, "zip", json_folder_path)
 
-print(f"Se comprime el archivo de visualización {namedata}.zip")
+print(f"Se comprime la carpeta de visualización '{namedata}' en formato '.zip'")
+print(f"Se le aplica un cambio de nombre para facilitar la carga del caso ({namedata[5:]}.zip)")
 
 # Ruta de destino para mover la carpeta
-Destino = '/home/emonsalve/EnergyViewer/Archivos_JSON' # Modificable
-ruta_destino = os.path.join(Destino, namedata)
-
+Destino_Json = Folder_Json
 # Mover la carpeta
-shutil.move(folder_path, ruta_destino)
+shutil.move(json_folder_path, Destino_Json)
 
-print(f"Se mueve la carpeta de visualización '{namedata}' hacia '{ruta_destino}'")
+print(f"Se mueve la carpeta de visualización '{namedata}' hacia '{os.path.basename(Destino_Json)}'")
+print("Se ha finalizado con éxito la función de procesamiento de Base de Datos y Resultados PLP")
