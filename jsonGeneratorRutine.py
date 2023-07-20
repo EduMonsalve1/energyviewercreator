@@ -87,13 +87,14 @@ print("--------Archivo plpbar cargado-------------\n")
 
 
 print("--------Cargando Archivo de ubicaciones Ubibar-------------\n")
-ubibar=pd.read_csv(os.path.join(path_data,'ubibar.csv'),sep=';')
+ubibar=pd.read_csv(os.path.join(path_data,'ubibar.csv'),sep=';',encoding='utf-8-sig')
 ubibar=ubibar.drop('ID',axis=1)
 ubibar['LATITUD']=ubibar['LATITUD'].apply(lambda x:x.replace(',','.')).apply(float)
 ubibar['LONGITUD']=ubibar['LONGITUD'].apply(lambda x:x.replace(',','.')).apply(float)
 ubibar.columns=["BarName","latitud","longitud"]
 ubibar['BarName']=ubibar['BarName'].str.replace(" ","")
 print("--------Archivo de ubicaciones Ubibar Cargado-------------\n")
+
 
 print("--------Cargando Archivo plpcen-------------\n")
 plpcen=pd.read_csv(os.path.join(path_data,'plpcen.csv'))
@@ -109,7 +110,7 @@ print("--------Archivo plpcen cargado-------------\n")
 
 
 print("--------Cargando Archivo centralesinfo-------------\n")
-centralsinfo=pd.read_csv(os.path.join(path_data,'centralesinfo.csv'),sep=';')
+centralsinfo=pd.read_csv(os.path.join(path_data,'centralesinfo.csv'),sep=';',encoding='utf-8-sig')
 centralsinfo.columns=['id','CenName','type','CVar','effinciency','bus_id','serie_hidro_gen','serie_hidro_ver','min_power','max_power',"VembIn","VembFin","VembMin","VembMax","cotaMínima"]
 
 cols = ['min_power', 'max_power', 'effinciency', 'CVar', 'VembIn', 'VembFin', 'VembMin', 'VembMax', 'cotaMínima']
@@ -119,7 +120,7 @@ for col in cols:
 
 hydric_adicional = pd.read_csv(os.path.join(path_data,'hydric_adicional.csv'),sep=";")
 
-tiposcentrales=pd.read_csv(os.path.join(path_data,'centralestype.csv'), encoding="latin-1").rename(columns={'cen_name':'CenName'})
+tiposcentrales=pd.read_csv(os.path.join(path_data,'centralestype.csv'),sep=';',encoding='utf-8-sig').rename(columns={'cen_name':'CenName'})
 typecentrals=indexcen.merge(tiposcentrales,on='CenName')
 
 for x in range(len(indexcen['id'])):
@@ -129,7 +130,6 @@ for x in range(len(indexcen['id'])):
         plpcen.loc[plpcen['id'] == indexcen['id'][x], 'tipo'] = tipo[0]
 	
 print("--------Archivo centralesinfo cargado-------------\n")
-
 
 
 print("--------Cargando Archivo plplin-------------\n")
@@ -144,9 +144,8 @@ indexlin=plplin[['id','LinName',"bus_a","bus_b"]].drop_duplicates(keep="first").
 print("--------Archivo plplin Cargado-------------\n")
 
 
-
 print("--------Cargando Archivo linesinfo-------------\n")
-linesinfo=pd.read_csv(os.path.join(path_data,'linesinfo.csv'),sep=';')
+linesinfo=pd.read_csv(os.path.join(path_data,'linesinfo.csv'),sep=';',encoding='utf-8-sig')
 linesinfo.columns=["id","LinName","bus_a","bus_b","max_flow_a_b","max_flow_b_a","voltage","r","x","segments","active"]
 linesinfo['LinName']=linesinfo['LinName'].str.replace(" ","")
 linesinfo['max_flow_a_b']=(linesinfo["max_flow_a_b"].apply(str)).apply(lambda x:x.replace(',','.')).apply(float)
