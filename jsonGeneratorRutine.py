@@ -87,7 +87,7 @@ print("--------Archivo plpbar cargado-------------\n")
 
 
 print("--------Cargando Archivo de ubicaciones Ubibar-------------\n")
-ubibar=pd.read_csv(os.path.join(path_data,'ubibar.csv'),sep=';',encoding='utf-8-sig')
+ubibar=pd.read_csv(os.path.join(path_data,'ubibar.csv'),sep=',',encoding='utf-8-sig')
 ubibar=ubibar.drop('ID',axis=1)
 ubibar['LATITUD']=ubibar['LATITUD'].apply(lambda x:x.replace(',','.')).apply(float)
 ubibar['LONGITUD']=ubibar['LONGITUD'].apply(lambda x:x.replace(',','.')).apply(float)
@@ -110,7 +110,7 @@ print("--------Archivo plpcen cargado-------------\n")
 
 
 print("--------Cargando Archivo centralesinfo-------------\n")
-centralsinfo=pd.read_csv(os.path.join(path_data,'centralesinfo.csv'),sep=';',encoding='utf-8-sig')
+centralsinfo=pd.read_csv(os.path.join(path_data,'centralesinfo.csv'),sep=',',encoding='utf-8-sig')
 centralsinfo.columns=['id','CenName','type','CVar','effinciency','bus_id','serie_hidro_gen','serie_hidro_ver','min_power','max_power',"VembIn","VembFin","VembMin","VembMax","cotaMínima"]
 
 cols = ['min_power', 'max_power', 'effinciency', 'CVar', 'VembIn', 'VembFin', 'VembMin', 'VembMax', 'cotaMínima']
@@ -118,9 +118,9 @@ centralsinfo['CenName'] = centralsinfo["CenName"].str.replace(" ", "")
 for col in cols:
     centralsinfo[col] = centralsinfo[col].replace(",", ".", regex=True)
 
-hydric_adicional = pd.read_csv(os.path.join(path_data,'hydric_adicional.csv'),sep=";")
+hydric_adicional = pd.read_csv(os.path.join(path_data,'hydric_adicional.csv'),sep=',')
 
-tiposcentrales=pd.read_csv(os.path.join(path_data,'centralestype.csv'),sep=';',encoding='utf-8-sig').rename(columns={'cen_name':'CenName'})
+tiposcentrales=pd.read_csv(os.path.join(path_data,'centralestype.csv'),sep=',',encoding='utf-8-sig').rename(columns={'cen_name':'CenName'})
 typecentrals=indexcen.merge(tiposcentrales,on='CenName')
 
 for x in range(len(indexcen['id'])):
@@ -145,7 +145,7 @@ print("--------Archivo plplin Cargado-------------\n")
 
 
 print("--------Cargando Archivo linesinfo-------------\n")
-linesinfo=pd.read_csv(os.path.join(path_data,'linesinfo.csv'),sep=';',encoding='utf-8-sig')
+linesinfo=pd.read_csv(os.path.join(path_data,'linesinfo.csv'),sep=',',encoding='utf-8-sig')
 linesinfo.columns=["id","LinName","bus_a","bus_b","max_flow_a_b","max_flow_b_a","voltage","r","x","segments","active"]
 linesinfo['LinName']=linesinfo['LinName'].str.replace(" ","")
 linesinfo['max_flow_a_b']=(linesinfo["max_flow_a_b"].apply(str)).apply(lambda x:x.replace(',','.')).apply(float)
