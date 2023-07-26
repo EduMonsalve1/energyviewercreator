@@ -155,7 +155,7 @@ linesinfo['x']=(linesinfo['x'].apply(str)).apply(lambda x:x.replace(',','.')).ap
 
 linesfinal=indexlin.drop(['id','bus_a','bus_b'],axis=1).merge(linesinfo,on='LinName')
 linesfinal['id']=(linesfinal['id']).apply(int)
-
+linesfinal.sort_values("id", inplace=True)
 print("--------Archivo linesinfo Cargado-------------\n")
 
 print("--------Cargando Archivo Reservoirs-------------\n")
@@ -168,9 +168,6 @@ reservoirs['Hidro']=reservoirs['Hidro'].str.replace(" ","")
 indexres = reservoirs[['id','EmbName']].drop_duplicates(keep="first").reset_index(drop=True)
 
 junctionsinfo=centralsinfo[centralsinfo['type'].isin(["E",'S','R'])].reset_index(drop=True)
-junctionsinfo['serie_hidro_gen']=(junctionsinfo['serie_hidro_gen'].apply(str)).apply(lambda x:x.replace(',','.')).apply(float)
-junctionsinfo['serie_hidro_ver']=(junctionsinfo['serie_hidro_ver'].apply(str)).apply(lambda x:x.replace(',','.')).apply(float)
-
 reservoirsinfo=centralsinfo[centralsinfo['type'].isin(["E"])].reset_index(drop=True)
 reservoirsinfo.rename(columns={'CenName':'EmbName'}, inplace=True)
 
@@ -652,7 +649,7 @@ for x in range(ngen): # Para cada generador (central)
 		if len(tipo)>0:
 			aux.append(tipo[0])
 		else:
-			aux.append(None)
+			aux.append("otros")
 		aux.append(longitud)
 		aux.append(latitud)
 		aux.append(centralsinfo[centralsinfo['CenName']==indexcen['CenName'][x]]['effinciency'])
