@@ -44,7 +44,7 @@ if Choice == '2':
     # Ruta de destino para guardar los archivos descomprimidos
     path_data = os.path.join(Folder_IPLP,Zip_name)
     Destino_casos = os.path.basename(Folder_IPLP)
-    print(f"  Se procede a descomprimir el archivo '{Zip_file}'")
+    print(f"\n  Se procede a descomprimir el archivo '{Zip_file}'")
     print(f"  La carpeta de destino de los archivos CSV es '{Destino_casos}'")
     print("  Se inicia la descompresión del archivo '.zip'")
     # Crear la carpeta de destino si no existe
@@ -69,7 +69,7 @@ while not path_corr3:
     if aux == "y":
         path_corr3=True
 namedata = f"Json_{os.path.basename(path_data)[5:]}"
-print(f"A continuación, el nombre de la carpeta en donde se encontrarán\nlos archivos Json se llamará '{namedata}'")
+print(f"\nA continuación, el nombre de la carpeta en donde se encontrarán\nlos archivos Json se llamará '{namedata}'")
 print()
 print("---------------------------------- Iniciando Carga de archivos-----------------------------------\n")
 
@@ -339,16 +339,16 @@ def valorXY(LatP, LonP, scale):
 
 print("A continuación se iniciará el proceso de creación de la carpeta Scenarios, este proceso en total puede llegar a tomar más de 1 hora 30 minutos\n")
 
-print("Creando archivos de Bloques a Fechas")
+print("Creando archivos de Bloques a Fechas:")
 indhor2=indhor.drop('Hora',axis=1).groupby(['Año','Mes'])
 indhorlist=[]
 for x in indhor2:
     indhorlist.append([str(x[1]['Bloque'].min()),str(x[1]['Bloque'].max()),str(x[0])])
 with open( namedata+'/Scenarios/indhor.json', 'w') as f:
   json.dump(indhorlist, f)
+print("Bloques a Fechas creados con éxito")
 
-
-print("Creando archivos generación por Sistema por Hidrología")
+print("\nCreando archivos generación por Sistema por Hidrología:")
 
 typegenlist=typecentrals.cen_type.unique()
 for i,hydro in enumerate(hidrolist):
@@ -365,7 +365,7 @@ for i,hydro in enumerate(hidrolist):
     with open(generation_sistem_path+f'/generation_system_{i+1}.json', 'w') as f:
         json.dump(dic_type_gen, f)
 	
-print("Creando archivos para Grafico Percentiles Costo Marginal")
+print("\nCreando archivos para Grafico Percentiles Costo Marginal:")
 def percentilCM():
     datos_bar = plpbar[['Hidro', 'time','id', 'BarName', 'CMgBar']]
     lista_bar = datos_bar.BarName.unique()
@@ -396,7 +396,7 @@ def percentilCM():
 
 percentilCM()
 
-print("Creando archivos para Grafico Percentiles flujos de lineas de transmisión")
+print("\nCreando archivos para Grafico Percentiles flujos de lineas de transmisión:")
 def percentilFL():
     datos_lineas=plplin[['id','Hidro', 'time', 'LinName', 'LinFluP', 'capacity']]
     lista_lineas = datos_lineas.LinName.unique()
@@ -427,7 +427,7 @@ def percentilFL():
 percentilFL()
 
 
-print("Creando Archivos Bus en Scenario \n")
+print("\nCreando Archivos Bus en Scenario:")
 # Bus contiene:
 '''
 		(*) id <int>: identificador de la barra 
@@ -465,10 +465,9 @@ for hidronum,hidroname in enumerate(hidrolist):
 		dfbuslist.append(dfbussauxx[dfbussauxx.id==idaux].reset_index(drop=True))
 	print(f"{((hidronum+1)/len(hidrolist))*100}% Completado")
 	busscenariofunction(dfbuslist,busscenariolist[hidronum])
+print("Archivos Bus en Scenario creados")
 
-print("Archivos Bus en Scenario creados\n")
-
-print("Creando Archivos Central en Scenario \n")
+print("\nCreando Archivos Central en Scenario:")
 # Centrals contiene:
 '''
 		(*) id <int>: identificador del generador
@@ -503,18 +502,16 @@ for hidronum, hidroname in enumerate(hidrolist):
     print(f"{((hidronum + 1) / len(hidrolist)) * 100}% Completado")
     centralscenariofunction(dfcenlist, centralscenariolist[hidronum])
 
-print("Archivos Central en Scenario creados \n")
+print("Archivos Central en Scenario creados")
 
-print("Creando Archivos Lineas en Scenario \n")
+print("\nCreando Archivos Lineas en Scenario:")
 '''
-
         (*) id <int>: identificador de la linea 
 		(*) time <int>: instante de registro
 		(*) bus_a <int>: identificador de la barra de origen
 		(*) bus_b <int>: identificador de la barra de destino
 		flow <float>: flujo en el instante time [MW]
-		value <float>: mismo valor que flow [MW]
-        
+		value <float>: mismo valor que flow [MW]   
 '''
 # if not Path('linesscenariolist.pickle').is_file():
 def linescenariofunction(dflinelist, linpath):
@@ -542,10 +539,9 @@ for hidronum, hidroname in enumerate(hidrolist):
     dflinelist = [dflinesaux[dflinesaux.id == linesfinal['id'][x]].reset_index(drop=True) for x in range(nlin)]
     print(f"{((hidronum + 1) / len(hidrolist)) * 100}% Completado")
     linescenariofunction(dflinelist, linescenariolist[hidronum])
-print("Archivos Line en Scenario creados \n")
+print("Archivos Line en Scenario creados")
 
-print("Creando Archivos Reservoirs en Scenario \n")
-
+print("\nCreando Archivos Reservoirs en Scenario:")
 # Resevoirs contiene:
 '''
 		(*) time <int>: instante de registro
@@ -555,7 +551,6 @@ print("Creando Archivos Reservoirs en Scenario \n")
 		level <float>: nivel en el instante time
 		value <float>: mismo valor que level
 '''
-
 def resscenariofunction(dfreslist, respath):
     for x in range(nres):
         idaux = indexres['id'][x]
@@ -576,18 +571,15 @@ for hidronum, hidroname in enumerate(hidrolist):
     dfreslist = [dfresaux[dfresaux.id == indexres['id'][x]].reset_index(drop=True) for x in range(nres)]
     print(f"{((hidronum + 1) / len(hidrolist)) * 100}% Completado")
     resscenariofunction(dfreslist, reservoirscenariolist[hidronum])
-print("Archivos Reservoir en Scenario creados \n")
+print("Archivos Reservoir en Scenario creados")
 
+print("\nAhora se procede a crear los Archivos correspondientes a la Topología y datos estáticos de los elementos:")
 
-
-print("Ahora se procede a crear los Archivos correspondientes a la Topología y datos estáticos de los elementos")
-
-print("Creando datos topologicos Bus")
+print("  Creando datos topologicos Bus")
 
 ubibar[['latUTM','lonUTM']]=ubibar.apply(lambda row: valorXY(row['latitud'],row['longitud'],scale=0.00001),axis=1,result_type='expand')
 dirdfbus=ubibar
 # bus electric contiene:
-
 '''   
 		(*) id <int>: identificador de la barra
 		(*) name <str>: nombre de la barra
@@ -617,7 +609,7 @@ buselectric=pd.DataFrame(buselectricfilas_aux,columns=['id','name','longitude','
 
 buselectric.to_json(electricTopology+"/bus.json",orient='records')
 
-print("Creando datos topologicos Central")
+print("  Creando datos topologicos Central")
 
 # centrals electric contiene:
 
@@ -641,7 +633,6 @@ print("Creando datos topologicos Central")
 		(?) cvc <unknown>: parámetro no identificado
 		(?) entry_date <unknown>: parámetro no identificado
 '''
-
 centralselectricfilas_aux=[]
 for x in range(ngen): # Para cada generador (central)
 	if indexcen['bus_id'][x]==0 or np.isnan(indexcen['bus_id'][x]): # No existe la barra 0, por lo que no se consideran dichos generadores
@@ -675,8 +666,9 @@ centralelectric=pd.DataFrame(centralselectricfilas_aux,columns=['id','bus_id','n
 centralelectric.to_json(electricTopology+"/centrals.json",orient='records')
 
 
-print("Creando datos topologicos Lineas")
+print("  Creando datos topologicos Lineas")
 # Lines electric tiene:
+
 '''  
         (*) id <int>: identificador de la línea
 		(*) bus_a <int>: id de la barra origen
@@ -724,7 +716,7 @@ lineelectric=pd.DataFrame(lineselectricfilas_aux,columns=['id','name','bus_a','b
 lineelectric.to_json(electricTopology+"/lines.json",orient='records')
 
 
-print("Creando datos topologicos Reservoirs")
+print("  Creando datos topologicos Reservoirs")
 
 '''   
         (*) id <int>: identificador del embalse
@@ -766,7 +758,7 @@ reshydric=pd.DataFrame(reshydricfilas_aux,columns=['id','junction_id','name','ty
 
 reshydric.to_json(hydricTopology+"/reservoirs.json",orient='records')
 
-print("Creando datos topologicos Junctions")
+print("  Creando datos topologicos Junctions")
 
 '''
 	(*) id <int>: identificador de la unión
@@ -795,7 +787,7 @@ junctionhydric=pd.DataFrame(junctionhydricfilas_aux,columns=['id','name','logitu
 
 junctionhydric.to_json(hydricTopology+"/junctions.json",orient='records')
 
-print("Creando datos topologicos Waterways")
+print("  Creando datos topologicos Waterways")
 
 '''
         (*) id <int>: identificador del canal
@@ -876,8 +868,7 @@ for x in range(len(junctionsinfo)):
 waterwayshydric=pd.DataFrame(junctionhydricfilas_aux,columns=["id","name","type","junc_a_id","junc_b_id","active","fmin","fmax","cvar","delay"])
 waterwayshydric.to_json(hydricTopology+"/waterways.json",orient='records')
 
-print("Archivos listos para visualizar ubicados en la ruta en donde se encuentra este archivo py")
-print()
+print("\nArchivos listos para visualizar ubicados en la ruta en donde se encuentra este archivo py")
 print(f"Se inicia la compresión de la carpeta de visualización '{namedata}' en formato '.zip'")
 print("Esto puede tardar entre 3 a 5 minutos debido al tamaño de los archivos")
 # Se comprime el archivo de salidas .json
@@ -898,4 +889,4 @@ if os.path.exists(json_Folder):
 shutil.move(json_folder_path, Destino_Json)
 
 print(f"Se mueve la carpeta de visualización '{namedata}' hacia '{os.path.basename(Destino_Json)}'")
-print("Se ha finalizado con éxito la función de procesamiento de Base de Datos y Resultados PLP")
+print("Se ha finalizado con éxito la función de procesamiento de Base de Datos y Resultados PLP\n")
