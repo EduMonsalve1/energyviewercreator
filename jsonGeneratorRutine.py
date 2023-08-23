@@ -683,19 +683,21 @@ print("  Creando datos topologicos Lineas")
 		(?) entry_date <unknown>: parámetro no identificado
 		(?) exit_date <unknown>: parámetro no identificado
 '''
-
+Unique_Name = plplin.drop_duplicates(subset="LinName")
+lines_rep = Unique_Name[Unique_Name.duplicated(subset=['bus_a', 'bus_b'], keep=False)]["LinName"].tolist()
 lineselectricfilas_aux=[]
 for x in range(nlin): # Para cada linea
-	if linesfinal['active'][x]==1:
+	if linesfinal['active'][x]==1 or (linesfinal['active'][x]==0 and linesfinal["LinName"][x] not in lines_rep):
 		aux=[]
 		bus_a_id = linesfinal['bus_a'][x]
 		bus_b_id = linesfinal['bus_b'][x]
 		name = linesfinal['LinName'][x]
+		act = linesfinal['active'][x]
 		aux.append(linesfinal['id'][x])
 		aux.append(name)
 		aux.append(bus_a_id)
 		aux.append(bus_b_id)
-		aux.append(1)
+		aux.append(act)
 		# capacidad
 		aux.append(0)
 		aux.append(linesfinal['max_flow_a_b'][x])
