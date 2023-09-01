@@ -183,7 +183,6 @@ indhor = pd.read_csv(os.path.join(path_data,'indhor.csv'),encoding='latin-1')
 print("--------Archivo indhor Cargado-------------\n")
 
 # Creando directorios
-
 electricTopology=namedata+'/Topology/Electric'
 hydricTopology=namedata+'/Topology/Hydric'
 
@@ -510,6 +509,8 @@ print("\nCreando Archivos Lineas en Scenario:")
 		flow <float>: flujo en el instante time [MW]
 		value <float>: mismo valor que flow [MW]   
 '''
+Unique_Name = plplin.drop_duplicates(subset="LinName")
+lines_rep = Unique_Name[Unique_Name.duplicated(subset=['bus_a', 'bus_b'], keep=False)]["LinName"].tolist()
 # if not Path('linesscenariolist.pickle').is_file():
 def linescenariofunction(dflinelist, linpath):
     for x in range(nlin):
@@ -683,8 +684,6 @@ print("  Creando datos topologicos Lineas")
 		(?) entry_date <unknown>: parámetro no identificado
 		(?) exit_date <unknown>: parámetro no identificado
 '''
-Unique_Name = plplin.drop_duplicates(subset="LinName")
-lines_rep = Unique_Name[Unique_Name.duplicated(subset=['bus_a', 'bus_b'], keep=False)]["LinName"].tolist()
 lineselectricfilas_aux=[]
 for x in range(nlin): # Para cada linea
 	if linesfinal['active'][x]==1 or (linesfinal['active'][x]==0 and linesfinal["LinName"][x] not in lines_rep):
